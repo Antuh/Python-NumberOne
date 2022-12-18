@@ -1,19 +1,27 @@
 import socket
- 
-clntsock = socket.socket(socket.AF_INET,socket.SOCK_STREAM)
-clntsock.setsockopt(socket.SOL_SOCKET,socket.SO_REUSEADDR,1)
- 
-    
-def connect():
-    clntsock.connect(('localhost',9090))
-    data = clntsock.recv(1024)
-    udata = data.decode('utf-8')
-    print(udata)
+
+
+def main():
+    client_socket = socket.socket(socket.AF_INET,socket.SOCK_STREAM)
+    client_socket.setsockopt(socket.SOL_SOCKET,socket.SO_REUSEADDR,1)
+    client_socket.connect(('localhost',9990))
+    print("Success connect")
+
+
     while True:
-        out = input('Mess: ')
-        b_out = out.encode('utf-8')
-        clntsock.send(b_out)
- 
- 
+        try:
+            message :str = input("Enter a message for the server>> ")
+    
+            client_socket.send(message.encode())
+            message_server = client_socket.recv(1024).decode()
+
+            print("Message from the server: "+message_server)
+        
+        except Exception:
+            print("Что-то пошло не так...")
+        except KeyboardInterrupt:
+            client_socket.close()
+            exit()
+  
 if __name__ == '__main__':
-    connect()
+    main()
